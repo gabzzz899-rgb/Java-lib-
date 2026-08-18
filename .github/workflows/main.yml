@@ -9,9 +9,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: List files
+        run: ls -la
+
       - name: Extract zip
         run: |
-          unzip "LGL V5 LATEST SOURCE (JAVA).zip" -d extracted
+          ZIP=$(find . -name "*.zip" | head -1)
+          echo "Found zip: $ZIP"
+          unzip "$ZIP" -d extracted
 
       - uses: nttld/setup-ndk@v1
         with:
@@ -20,7 +25,11 @@ jobs:
 
       - name: Build SO
         run: |
-          cd "extracted/LGL V5 LATEST SOURCE (JAVA)/app/src/main"
+          SRC=$(find extracted -name "Android.mk" | grep "jni/Android.mk" | head -1)
+          JNI_DIR=$(dirname "$SRC")
+          MAIN_DIR=$(dirname "$JNI_DIR")
+          echo "Building from: $MAIN_DIR"
+          cd "$MAIN_DIR"
           ndk-build \
             NDK_PROJECT_PATH=. \
             APP_BUILD_SCRIPT=jni/Android.mk \
