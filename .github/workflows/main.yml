@@ -30,14 +30,9 @@ jobs:
           MAIN_DIR=$(dirname "$JNI_DIR")
           echo "Building from: $MAIN_DIR"
           cd "$MAIN_DIR"
-          # Rename Il2Cpp.h to IL2Cpp.h (case fix, no duplicate)
-          find . -name "Il2Cpp.h" | while read f; do
-            mv "$f" "$(dirname "$f")/IL2Cpp.h"
-          done
-          # Same for Il2Cpp.cpp
-          find . -name "Il2Cpp.cpp" | while read f; do
-            mv "$f" "$(dirname "$f")/IL2Cpp.cpp"
-          done
+          # Keep both versions — symlink so both includes work
+          ln -sf Il2Cpp.h jni/Hook/unity/IL2Cpp.h
+          ln -sf Il2Cpp.cpp jni/Hook/unity/IL2Cpp.cpp
           ndk-build \
             NDK_PROJECT_PATH=. \
             APP_BUILD_SCRIPT=jni/Android.mk \
