@@ -35,6 +35,12 @@ jobs:
           if [ -d "jni/Hook/Struct" ] && [ ! -d "jni/Hook/struct" ]; then
             cp -r jni/Hook/Struct jni/Hook/struct
           fi
+          if [ -d "jni/imgui" ] && [ ! -d "jni/ImGui" ]; then
+            cp -r jni/imgui jni/ImGui
+          fi
+          if [ -d "jni/ImGui" ] && [ ! -d "jni/imgui" ]; then
+            cp -r jni/ImGui jni/imgui
+          fi
           ndk-build \
             NDK_PROJECT_PATH=. \
             APP_BUILD_SCRIPT=jni/Android.mk \
@@ -43,5 +49,3 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: libSoundSupport
-          path: output/
