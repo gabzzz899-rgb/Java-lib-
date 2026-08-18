@@ -1,0 +1,33 @@
+name: Build SO
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract zip
+        run: |
+          unzip "LGL V5 LATEST SOURCE (JAVA).zip" -d extracted
+
+      - uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r25c
+          add-to-path: true
+
+      - name: Build SO
+        run: |
+          cd "extracted/LGL V5 LATEST SOURCE (JAVA)/app/src/main"
+          ndk-build \
+            NDK_PROJECT_PATH=. \
+            APP_BUILD_SCRIPT=jni/Android.mk \
+            NDK_APPLICATION_MK=jni/Application.mk \
+            NDK_LIBS_OUT=$GITHUB_WORKSPACE/output
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: libSoundSupport
+          path: output/
