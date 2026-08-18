@@ -30,8 +30,14 @@ jobs:
           MAIN_DIR=$(dirname "$JNI_DIR")
           echo "Building from: $MAIN_DIR"
           cd "$MAIN_DIR"
-          # Fix case sensitivity
-          find . -name "Il2Cpp.h" -exec sh -c 'cp "$1" "$(dirname "$1")/IL2Cpp.h"' _ {} \;
+          # Rename Il2Cpp.h to IL2Cpp.h (case fix, no duplicate)
+          find . -name "Il2Cpp.h" | while read f; do
+            mv "$f" "$(dirname "$f")/IL2Cpp.h"
+          done
+          # Same for Il2Cpp.cpp
+          find . -name "Il2Cpp.cpp" | while read f; do
+            mv "$f" "$(dirname "$f")/IL2Cpp.cpp"
+          done
           ndk-build \
             NDK_PROJECT_PATH=. \
             APP_BUILD_SCRIPT=jni/Android.mk \
